@@ -28,8 +28,10 @@ export default function Three() {
   useEffect(() => {
     if(!!sphereRef.current){
       console.log(sphereRef.current)
-
-      gsap.to(sphereRef.current.position, {x: 3, duration: 4, ease: 'bounce'})
+      const timeline = gsap.timeline({paused: true})
+      timeline.to(sphereRef.current.position, {x: 5, duration: 3, ease: 'power2.out'})
+      timeline.to(sphereRef.current.position, {y: 0.5, duration: 1.5, ease: 'bounce.out'}, '<')
+      timeline.play()
     }
   }, [sphereRef.current])
 
@@ -45,12 +47,12 @@ export default function Three() {
       {/* Shadows need to be enabled on each object from light to sphere to floor, and also needs enabled on the component itself */}
 
 
-      <PerspectiveCamera makeDefault position={[0, 1, 5]}/>
+      <PerspectiveCamera makeDefault position={[0, 35, 5]}/>
       {/*Perspective Camera adds depth, by making near things bigger and far things smaller */}
       <OrbitControls ref={orbitControlsRef} minPolarAngle={angleToRadians(60)} maxPolarAngle={angleToRadians(80)} /> {/*orbit controls controls camera */}
 
       {/*sphere*/}
-      <mesh position={[-2, 0.5, 0]} ref={sphereRef} castShadow>
+      <mesh position={[-2, 4, 0]} ref={sphereRef} castShadow>
         <sphereGeometry args={[0.5, 32, 32]} />
         <meshStandardMaterial color='#ffffff' metalness={.6} roughness={.3}/>
       </mesh>
