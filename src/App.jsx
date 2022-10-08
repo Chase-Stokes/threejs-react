@@ -7,7 +7,7 @@ import './App.css'
 // whats passed into suspense fallback will be displayed if page requires loading
 function App() {
   return (
-    <Canvas id='three-canvas-container'>
+    <Canvas id='three-canvas-container' shadows>
       <Suspense fallback={null}> 
         <Three />
       </Suspense>

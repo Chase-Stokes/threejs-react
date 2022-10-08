@@ -35,18 +35,23 @@ export default function Three() {
       <OrbitControls ref={orbitControlsRef} minPolarAngle={angleToRadians(60)} maxPolarAngle={angleToRadians(80)} /> {/*orbit controls controls camera */}
 
       {/*sphere*/}
-      <mesh position={[0, 0.5, 0]}>
-        <sphereGeometry args={[0.5, 32, 32]}/>
+      <mesh position={[0, 0.5, 0]} castShadow>
+        <sphereGeometry args={[0.5, 32, 32]} />
         <meshStandardMaterial color='#ffffff' />
       </mesh>
 
       {/*floor*/}
-      <mesh rotation={[-(angleToRadians(90)), 0, 0]}>
+      <mesh rotation={[-(angleToRadians(90)), 0, 0]} receiveShadow>
         <planeGeometry args={[7, 7]} />
         <meshStandardMaterial color='#1ea3d8' />
       </mesh>
 
-      <ambientLight args={["#ffffff", 1]} /> {/*color of light then intensity*/}
+      <ambientLight args={["#ffffff", .25]} /> {/*color of light then intensity*/}
+
+
+      <spotLight args={['#ffffff', 1.5, 10, angleToRadians(45), .4, 1]} position={[-4, 3, 0]} castShadow />
+      {/* <pointLight args={['#ffffff', 1]} position={[-2, 2, 0]} /> */}
+      {/* <directionalLight args={['#ffffff', 1]} position={[-2, 2, 0]} /> */}
     </>
   )
 }
