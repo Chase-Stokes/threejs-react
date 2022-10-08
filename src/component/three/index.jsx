@@ -1,13 +1,17 @@
 // import { angleToRadius } from '../../utils/angle'
 
-import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
-import { useEffect, useRef } from "react";
-import { angleToRadians } from "../../utils/angle";
+import { Environment, OrbitControls, PerspectiveCamera } from "@react-three/drei"
+import { useFrame } from "@react-three/fiber"
+import { useEffect, useRef } from "react"
+import { BackSide, FrontSide } from "three"
+import { angleToRadians } from "../../utils/angle"
+import gsap from 'gsap'
 
 export default function Three() {
 
   const orbitControlsRef = useRef(null)
+
+  //code below used to move camera around
   useFrame((state) => {
     //use frame runs at least 60 times a second depends on refresh rate
     if(!!orbitControlsRef.current){
@@ -19,15 +23,26 @@ export default function Three() {
     // console.log(state.mouse)
   })
 
+  //animations
+  const sphereRef = useRef(null)
   useEffect(() => {
-    if(!!orbitControlsRef.current){
-      console.log(orbitControlsRef.current)
+    if(!!sphereRef.current){
+      console.log(sphereRef.current)
+
+      gsap.to(sphereRef.current.position, {x: 3, duration: 4, ease: 'bounce'})
     }
-  }, [orbitControlsRef.current])
+  }, [sphereRef.current])
+
+  // useEffect(() => {
+  //   if(!!orbitControlsRef.current){
+  //     console.log(orbitControlsRef.current)
+  //   }
+  // }, [orbitControlsRef.current])
 
   return (
     <>
       {/*Anything made in 3js will have default coords of [0, 0, 0] */}
+      {/* Shadows need to be enabled on each object from light to sphere to floor, and also needs enabled on the component itself */}
 
 
       <PerspectiveCamera makeDefault position={[0, 1, 5]}/>
@@ -35,23 +50,29 @@ export default function Three() {
       <OrbitControls ref={orbitControlsRef} minPolarAngle={angleToRadians(60)} maxPolarAngle={angleToRadians(80)} /> {/*orbit controls controls camera */}
 
       {/*sphere*/}
-      <mesh position={[0, 0.5, 0]} castShadow>
+      <mesh position={[-2, 0.5, 0]} ref={sphereRef} castShadow>
         <sphereGeometry args={[0.5, 32, 32]} />
-        <meshStandardMaterial color='#ffffff' />
+        <meshStandardMaterial color='#ffffff' metalness={.6} roughness={.3}/>
       </mesh>
 
       {/*floor*/}
       <mesh rotation={[-(angleToRadians(90)), 0, 0]} receiveShadow>
-        <planeGeometry args={[7, 7]} />
+        <planeGeometry args={[40, 40]} />
         <meshStandardMaterial color='#1ea3d8' />
       </mesh>
 
-      <ambientLight args={["#ffffff", .25]} /> {/*color of light then intensity*/}
+      <ambientLight args={["#ffffff", .25]} /> 
 
+      <spotLight args={['#ffffff', 2, 20, angleToRadians(45), .4, 1]} position={[-5, 2, 2]} castShadow />
+      {/* <pointLight args={['#ffffff', 1]} position={[-2, 2, 0]} castShadow/> */}
+      {/* <directionalLight args={['#ffffff', 1]} position={[-2, 2, 0]} castShadow/> */}
 
-      <spotLight args={['#ffffff', 1.5, 10, angleToRadians(45), .4, 1]} position={[-4, 3, 0]} castShadow />
-      {/* <pointLight args={['#ffffff', 1]} position={[-2, 2, 0]} /> */}
-      {/* <directionalLight args={['#ffffff', 1]} position={[-2, 2, 0]} /> */}
+      <Environment background>
+        <mesh>
+          <sphereGeometry args={[50, 100, 100]} />
+          <meshBasicMaterial color='purple' side={BackSide}/>
+        </mesh>
+      </Environment>
     </>
   )
 }
