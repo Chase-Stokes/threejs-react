@@ -1,0 +1,9 @@
+#three-canvas-container {
+  height: 100vh !important;
+  width: 100vw !important;
+  /* background-color: rgb(51, 54, 41); */
+}
+
+body {
+  background-color: lightslategray
+}
