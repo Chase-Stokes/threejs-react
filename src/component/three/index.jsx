@@ -1,14 +1,22 @@
-// import { angleToRadius } from '../../utils/angle'
-
-import { Environment, OrbitControls, PerspectiveCamera } from "@react-three/drei"
+import { Environment, OrbitControls, PerspectiveCamera, useTexture } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import { useEffect, useRef } from "react"
 import { BackSide, FrontSide } from "three"
 import { angleToRadians } from "../../utils/angle"
 import gsap from 'gsap'
 
-export default function Three() {
+//floor textures
+import ambientOcclusion from '../../assets/Concrete_Floor/Concrete_019_AmbientOcclusion.jpg'
+import base from '../../assets/Concrete_Floor/Concrete_019_BaseColor.jpg'
+import displacement from '../../assets/Concrete_Floor/Concrete_019_Height.png'
+import normal from '../../assets/Concrete_Floor/Concrete_019_Normal.jpg'
+import roughness from '../../assets/Concrete_Floor/Concrete_019_Roughness.jpg'
 
+//models
+import Car from './car'
+
+export default function Three() {
+  const [ambientOcclusionFloorTexture, baseFloorColorTexture, displacementFloorTexture, normalFloorTexture, roughnessFloorTexture] = useTexture([ambientOcclusion, base, displacement, normal, roughness])
   const orbitControlsRef = useRef(null)
 
   //code below used to move camera around
@@ -30,7 +38,7 @@ export default function Three() {
       console.log(sphereRef.current)
       const timeline = gsap.timeline({paused: true})
       timeline.to(sphereRef.current.position, {x: 5, duration: 3, ease: 'power2.out'})
-      timeline.to(sphereRef.current.position, {y: 0.5, duration: 1.5, ease: 'bounce.out'}, '<')
+      timeline.to(sphereRef.current.position, {y: .7, duration: 1.5, ease: 'bounce.out'}, '<')
       timeline.play()
     }
   }, [sphereRef.current])
@@ -57,10 +65,12 @@ export default function Three() {
         <meshStandardMaterial color='#ffffff' metalness={.6} roughness={.3}/>
       </mesh>
 
+      <Car />
+
       {/*floor*/}
       <mesh rotation={[-(angleToRadians(90)), 0, 0]} receiveShadow>
         <planeGeometry args={[40, 40]} />
-        <meshStandardMaterial color='#1ea3d8' />
+        <meshStandardMaterial map={baseFloorColorTexture} normalMap={normalFloorTexture} roughnessMap={roughnessFloorTexture} aoMap={ambientOcclusionFloorTexture} displacementMap={displacementFloorTexture}/>
       </mesh>
 
       <ambientLight args={["#ffffff", .25]} /> 
@@ -72,7 +82,7 @@ export default function Three() {
       <Environment background>
         <mesh>
           <sphereGeometry args={[50, 100, 100]} />
-          <meshBasicMaterial color='purple' side={BackSide}/>
+          <meshBasicMaterial color='black' side={BackSide}/>
         </mesh>
       </Environment>
     </>
